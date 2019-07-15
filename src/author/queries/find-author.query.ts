@@ -1,7 +1,7 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { AuthorStore } from '../author.store';
-import { AuthorAggregate } from '../author-aggregate';
 import { NotFoundException } from '@nestjs/common';
+import { AuthorAggregate } from '../../graphql';
 
 export class AuthorById {
     public id: string;

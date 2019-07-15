@@ -10,15 +10,39 @@ import { DeleteAuthorCommand } from './author/commands/delete-author.command';
 import { apolloWsPubSubProvider } from './apollo-ws-pub-sub.provider';
 import { AuthorDeletedHandler } from './author/events/author-deleted.handler';
 import { AuthorAddedHandler } from './author/events/author-added.handler';
+import { join } from 'path';
+import { GraphqlDirectivesResolver } from './graphql-directives-resolver';
+import { GraphqlDirectiveModule } from './graphql-directive.module';
 
 @Module({
   imports: [
       CqrsModule,
-      GraphQLModule.forRoot({
-          installSubscriptionHandlers: true,
-          debug: true,
-          playground: true,
-        autoSchemaFile: 'graphql.gql',
+      GraphQLModule.forRootAsync({
+          useFactory: (graphqlDirectiveResolver: GraphqlDirectivesResolver) => {
+              const directiveProviders = graphqlDirectiveResolver.explore();
+              const schemaDirectives = {};
+              for (const { name, instance } of directiveProviders) {
+                  schemaDirectives[name] = instance.resolver();
+              }
+
+              return {
+                  installSubscriptionHandlers: true,
+                  debug: true,
+                  playground: true,
+                  schemaDirectives,
+                  typePaths: ['./**/*.graphql'],
+                  definitions: {
+                      path: join(process.cwd(), 'src/graphql.ts'),
+                      outputAs: 'class',
+                  },
+              };
+          },
+          imports: [
+              GraphqlDirectiveModule,
+          ],
+          inject: [
+              GraphqlDirectivesResolver,
+          ],
       }),
   ],
   providers: [
@@ -38,4 +62,5 @@ import { AuthorAddedHandler } from './author/events/author-added.handler';
       AuthorStore,
   ],
 })
-export class AppModule {}
+export class AppModule {
+}

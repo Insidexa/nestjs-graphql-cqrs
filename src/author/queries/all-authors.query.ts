@@ -1,6 +1,6 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { AuthorStore } from '../author.store';
-import { AuthorAggregate } from '../author-aggregate';
+import { AuthorAggregate } from '../../graphql';
 
 export class AuthorsSearchParams {
 

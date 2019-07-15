@@ -1,4 +1,3 @@
-import { AuthorAggregate } from './author-aggregate';
 import { Args, Mutation, Parent, Query, ResolveProperty, Resolver, Subscription } from '@nestjs/graphql';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { plainToClass } from 'class-transformer';
@@ -11,6 +10,7 @@ import { Inject, UsePipes } from '@nestjs/common';
 import { JoiValidationPipe } from '../joi-validation.pipe';
 import { PUB_SUB } from '../apollo-ws-pub-sub.provider';
 import { PubSub } from 'apollo-server-express';
+import { AuthorAggregate } from '../graphql';
 
 @Resolver(AuthorAggregate)
 export class AuthorResolver {
@@ -47,7 +47,7 @@ export class AuthorResolver {
 
     @UsePipes(new JoiValidationPipe(AuthorCreateSchema))
     @Mutation(() => String)
-    async addAuthor(
+    public async addAuthor(
         @Args('addAuthor') newAuthor: AuthorCreate,
     ): Promise<string> {
         const id = v4();
@@ -68,7 +68,7 @@ export class AuthorResolver {
     }
 
     @Mutation(() => Boolean)
-    async removeAuthor(
+    public async removeAuthor(
         @Args('id') id: string,
     ) {
         await this.commandBus.execute(
@@ -79,12 +79,12 @@ export class AuthorResolver {
     }
 
     @Subscription(() => String)
-    authorDeleted() {
+    public authorDeleted() {
         return this.pubSub.asyncIterator('authorDeleted');
     }
 
     @Subscription(() => String)
-    authorAdded() {
+    public authorAdded() {
         return this.pubSub.asyncIterator('authorAdded');
     }
 }
