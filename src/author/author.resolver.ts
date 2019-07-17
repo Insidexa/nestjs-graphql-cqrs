@@ -47,15 +47,15 @@ export class AuthorResolver {
 
     @UsePipes(new JoiValidationPipe(AuthorCreateSchema))
     @Mutation(() => String)
-    public async addAuthor(
+    public addAuthor(
         @Args('addAuthor') newAuthor: AuthorCreate,
-    ): Promise<string> {
+    ) {
         const id = v4();
         const {
             firstName,
             lastName,
         } = newAuthor;
-        await this.commandBus.execute(plainToClass(
+        this.commandBus.execute(plainToClass(
             NewAuthor,
             {
                 id,
@@ -63,19 +63,15 @@ export class AuthorResolver {
                 lastName,
             },
         ));
-
-        return id;
     }
 
     @Mutation(() => Boolean)
-    public async removeAuthor(
+    public removeAuthor(
         @Args('id') id: string,
     ) {
-        await this.commandBus.execute(
+        this.commandBus.execute(
             plainToClass(DeleteAuthorById, { id }),
         );
-
-        return true;
     }
 
     @Subscription(() => String)
