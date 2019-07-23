@@ -11,6 +11,7 @@ import { JoiValidationPipe } from '../joi-validation.pipe';
 import { PUB_SUB } from '../apollo-ws-pub-sub.provider';
 import { PubSub } from 'apollo-server-express';
 import { AuthorAggregate } from '../graphql';
+import { AuthorPostsById } from './queries/author-posts.query';
 
 @Resolver(AuthorAggregate)
 export class AuthorResolver {
@@ -40,14 +41,19 @@ export class AuthorResolver {
 
     @ResolveProperty('posts')
     public posts(
-        @Parent() author,
+        @Parent() author: AuthorAggregate,
     ) {
-        return [];
+        return this.queryBus.execute(
+            plainToClass(
+                AuthorPostsById,
+                { id: author.id },
+            ),
+        );
     }
 
     @UsePipes(new JoiValidationPipe(AuthorCreateSchema))
     @Mutation(() => String)
-    public addAuthor(
+    public async addAuthor(
         @Args('addAuthor') newAuthor: AuthorCreate,
     ) {
         const id = v4();
@@ -55,7 +61,7 @@ export class AuthorResolver {
             firstName,
             lastName,
         } = newAuthor;
-        this.commandBus.execute(plainToClass(
+        await this.commandBus.execute(plainToClass(
             NewAuthor,
             {
                 id,
@@ -63,13 +69,15 @@ export class AuthorResolver {
                 lastName,
             },
         ));
+
+        return id;
     }
 
     @Mutation(() => Boolean)
-    public removeAuthor(
+    public async removeAuthor(
         @Args('id') id: string,
     ) {
-        this.commandBus.execute(
+        await this.commandBus.execute(
             plainToClass(DeleteAuthorById, { id }),
         );
     }

@@ -6,7 +6,7 @@ import { AuthorAggregate } from '../graphql';
 export class AuthorStore {
     public data: AuthorAggregate[] = [
         {
-            id: v4(),
+            id: 'c5d6594a-c615-4a00-963a-6300ad3e1dd4',
             firstName: 'asd',
             lastName: 'la',
         },

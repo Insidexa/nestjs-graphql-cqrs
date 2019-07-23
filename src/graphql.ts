@@ -10,6 +10,12 @@ export class AuthorCreate {
     lastName: string;
 }
 
+export class PostCreate {
+    title: string;
+    description?: string;
+    authorId: string;
+}
+
 export class AuthorAggregate {
     id: string;
     firstName?: string;
@@ -21,10 +27,15 @@ export abstract class IMutation {
     abstract addAuthor(addAuthor: AuthorCreate): string | Promise<string>;
 
     abstract removeAuthor(id: string): boolean | Promise<boolean>;
+
+    abstract addPost(addPost: PostCreate): string | Promise<string>;
 }
 
 export class PostAggregate {
+    id: string;
     title: string;
+    description?: string;
+    authorId: string;
 }
 
 export abstract class IQuery {

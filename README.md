@@ -1,22 +1,35 @@
 Url localhost:3002/graphql
 
 ```graql
-query selection {
+query authors {
   authors {
     id,
     firstName,
     lastName,
     posts {
-      title
+      id,
+      title,
+      authorId,
+      description
     }
   }
 }
 
-mutation add {
+query author {
+  author(id:"c5d6594a-c615-4a00-963a-6300ad3e1dd4") {
+    id
+  }
+}
+
+mutation addAuthor {
   addAuthor(addAuthor: { firstName:"test", lastName:"test" })
 }
 
-mutation remove {
+mutation addPost {
+  addPost(addPost: { title:"test secret p[so]", description:"asd", authorId:"c5d6594a-c615-4a00-963a-6300ad3e1dd4" })
+}
+
+mutation removeAuthor {
   removeAuthor(id:"uuid")
 }
 ```

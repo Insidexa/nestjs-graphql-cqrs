@@ -11,8 +11,12 @@ import { apolloWsPubSubProvider } from './apollo-ws-pub-sub.provider';
 import { AuthorDeletedHandler } from './author/events/author-deleted.handler';
 import { AuthorAddedHandler } from './author/events/author-added.handler';
 import { join } from 'path';
-import { GraphqlDirectivesResolver } from './graphql-directives-resolver';
-import { GraphqlDirectiveModule } from './graphql-directive.module';
+import { GraphqlDirectivesResolver } from './graphql-directive/graphql-directives-resolver';
+import { GraphqlDirectiveModule } from './graphql-directive/graphql-directive.module';
+import { PostResolver } from './post/post.resolver';
+import { AddPostCommand } from './post/commands/add-post.command';
+import { PostStore } from './post/post.store';
+import { AuthorPostsQuery } from './author/queries/author-posts.query';
 
 @Module({
   imports: [
@@ -55,11 +59,16 @@ import { GraphqlDirectiveModule } from './graphql-directive.module';
 
       FindAuthorQuery,
       AllAuthorsQuery,
+      AuthorPostsQuery,
 
       AuthorDeletedHandler,
       AuthorAddedHandler,
 
       AuthorStore,
+
+      PostResolver,
+      PostStore,
+      AddPostCommand,
   ],
 })
 export class AppModule {

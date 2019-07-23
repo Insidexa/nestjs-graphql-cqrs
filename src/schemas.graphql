@@ -1,4 +1,5 @@
 directive @upper on FIELD_DEFINITION
+directive @hideSecretTitle(val: String) on FIELD_DEFINITION
 
 type AuthorAggregate {
   id: String!
@@ -12,13 +13,23 @@ input AuthorCreate {
   lastName: String!
 }
 
+input PostCreate {
+  title: String!
+  description: String
+  authorId: String!
+}
+
 type Mutation {
   addAuthor(addAuthor: AuthorCreate!): String!
   removeAuthor(id: String!): Boolean!
+  addPost(addPost: PostCreate!): String!
 }
 
 type PostAggregate {
-  title: String!
+  id: String!
+  title: String! @upper @hideSecretTitle(val: "secret")
+  description: String
+  authorId: String!
 }
 
 type Query {
